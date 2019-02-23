@@ -2,17 +2,28 @@
 
 use Illuminate\Http\Request;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+Route::prefix('v0/')->group(function() {
+Route::get('users/profile/{id}', 'v0\UserProfilesController@getProfile');
+Route::patch('users/profile/{id}', 'v0\UserProfilesController@patchProfileName');
+Route::delete('users/profile/{id}', 'v0\UserProfilesController@deleteProfile');
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('user/{userId}/profiles', 'v0\UserProfilesController@getProfilesByUser');
+Route::get('users/profiles', 'v0\UserProfilesController@getAllProfiles');
 });
+
+
+Route::prefix('v0/db/')->group(function() {
+	Route::get('users/profile/{id}', 'v0\UserProfilesController@getProfile');
+	Route::patch('users/profile/{id}', 'v0\UserProfilesController@patchProfileName');
+	Route::delete('users/profile/{id}', 'v0\UserProfilesController@deleteProfile');
+
+	Route::get('user/{userId}/profiles', 'v0\UserProfilesController@getProfilesByUser');
+	Route::get('users/profiles', 'v0\UserProfilesController@getAllProfiles');
+});
+
+
+
+
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
