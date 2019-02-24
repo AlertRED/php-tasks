@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use App\Models\User\UserProfile;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -26,6 +27,10 @@ class RouteServiceProvider extends ServiceProvider
         //
 
         parent::boot();
+        Route::bind('userProfile', function ($id) {
+            return UserProfile::where('id', $id)->first() ?? abort(404,"Does not exist Profile");
+        });
+
     }
 
     /**

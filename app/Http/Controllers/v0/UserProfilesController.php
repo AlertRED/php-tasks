@@ -8,10 +8,17 @@ use App\Http\Controllers\Controller;
 use App\Models\User\UserProfile;
 
 class UserProfilesController extends Controller
-{
-	public function getProfile($id){
-		$userProfile = UserProfile::where('id', $id )->first();
-		abort_unless($userProfile, 404, "Does not exist id=$id" , ["Content-Type" => "application/json"]);
+{	
+	const itemOnPage = 5;
+
+	private function getItemRequest(string $field){
+		$result = array_key_exists($field, $_REQUEST);
+		abort_unless($result, 400, "Missing required parameter $field" , ["Content-Type" => "application/json"]);
+		return $_REQUEST[$field];
+	}
+
+	public function getProfile(UserProfile $userProfile){
+		abort_unless($userProfile, 404, "Does not exist id=$userProfile" , ["Content-Type" => "application/json"]);
 		return response()->json([
 						    "success" => true,
 						    "data" => [
@@ -20,48 +27,41 @@ class UserProfilesController extends Controller
 						]);
 	}
 
-	public function getProfilesByUser($id){
-		$userProfiles = UserProfile::where('user_id', $id )->get();
-		abort_unless($userProfiles, 404, "Does not exist Profiles whith id=$id" , ["Content-Type" => "application/json"]);
+	public function getProfilesByUser($userId){
+		$userProfiles = UserProfile::where('user_id', $userId)->get();
+		abort_unless(filled($userProfiles), 404, "Does not exist Profiles whith id=$id" , ["Content-Type" => "application/json"]);
 		return response()->json([
 						    "success" => true,
 						    "data" => [
-						    	"profile" => $userProfiles
+						    	"profiles" => $userProfiles
 						      ]
 						]);
 	}
 	
-
 	public function getAllProfiles(){
-			$userProfiles = UserProfile::paginate(5);
+			$page = self::getItemRequest('page');
+			$userProfiles = UserProfile::paginate(self::itemOnPage)->items();
 			return response()->json([
 							    "success" => true,
 							    "data" => [
-							    	"profile" => $userProfiles
+							    	"profiles" => $userProfiles
 							      ]
 							]);
 		}
 
-	public function patchProfileName($id){
-		$result = array_key_exists('name', $_REQUEST);
-		abort_unless($result, 418, "Does not exist name parameter" , ["Content-Type" => "application/json"]);
-
-		$name = $_REQUEST['name'];	
-		$userProfiles = UserProfile::where('id', $id)->update(['name' => $name]);
-		return $this->getProfile($id);
+	public function patchProfileName(UserProfile $userProfile){
+		$name = self::getItemRequest('name');
+		$userProfile->update(['name' => $name]);
+		return self::getProfile($userProfile);
 	}
 
-	public function deleteProfile($id){
-		$result = UserProfile::where('id', $id)->delete();
-		return response()->json(["success"=> (bool)$result]);
+	public function deleteProfile(UserProfile $userProfile){
+		return response()->json(["success"=> (bool) $userProfile->delete()]);
 	}
 
-
-
-	 public function getProfileDB($id){
-	 	$userProfile = DB::table('user_profiles')->get()->where('id', $id)->first();
-		if (!$userProfile)
-			return response()->json(['code' => 404, 'message' => "Профиль с id=$id не найден"]);
+	public function getProfileDB($id){
+	 	$userProfile = DB::table('user_profiles')->where('id', $id)->first();
+		abort_unless($userProfile, 400, "Does not exist Profile whith id=$id" , ["Content-Type" => "application/json"]);
 		return response()->json([
 						    "success" => true,
 						    "data" => [
@@ -70,33 +70,31 @@ class UserProfilesController extends Controller
 						]);
 	}
 
-	public function getProfilesByUserDB($id){
-		$userProfiles = DB::table('user_profiles')->get()->where('user_id', $id);
-		abort_unless($userProfiles, 404, "Does not exist Profiles whith id=$id" , ["Content-Type" => "application/json"]);
-
+	public function getProfilesByUserDB($userId){
+		$userProfiles = DB::table('user_profiles')->where('user_id', $userId)->get();
+		abort_unless(filled($userProfiles), 404, "Does not exist Profiles whith userId=$userId" , ["Content-Type" => "application/json"]);
 		return response()->json([
 						    "success" => true,
 						    "data" => [
-						    	"profile" => $userProfiles
+						    	"profiles" => $userProfiles
 						      ]
 						]);
 	}
 
 	public function getAllProfilesDB(){
-	 	 $userProfiles = DB::table('user_profiles')->paginate(5);
+		 $page = self::getItemRequest('page');
+	 	 $userProfiles = DB::table('user_profiles')->paginate(self::itemOnPage)->items();
+	 	 abort_unless(filled($userProfiles) and $page, 404, "Does not exist Page" , ["Content-Type" => "application/json"]);
 	 	 return response()->json([
 							    "success" => true,
 							    "data" => [
-							    	"profile" => $userProfiles
+							    	"profiles" => $userProfiles
 							      ]
 							]);
 	}
 
 	public function patchProfileNameDB($id){
-		$result = array_key_exists('name', $_REQUEST);
-		abort_unless($result, 418, "Does not exist name parameter" , ["Content-Type" => "application/json"]);
-
-		$name = $_REQUEST['name'];	
+		$name = self::getItemRequest('name');
 		DB::table('user_profiles')->where('id', $id)->update(['name' => $name]);		 	 
 		return $this->getProfileDB($id);
 	}
