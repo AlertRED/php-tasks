@@ -22,8 +22,7 @@ class UserProfilesController extends Controller
 
 	public function getProfilesByUser($id){
 		$userProfiles = UserProfile::where('user_id', $id )->get();
-		if (!$userProfile)
-			return response()->json(['code' => 404, 'message' => "Профили с user_id=$id не найдены"]);
+		abort_unless($userProfiles, 404, "Does not exist Profiles whith id=$id" , ["Content-Type" => "application/json"]);
 		return response()->json([
 						    "success" => true,
 						    "data" => [
@@ -45,7 +44,7 @@ class UserProfilesController extends Controller
 
 	public function patchProfileName($id){
 		$result = array_key_exists('name', $_REQUEST);
-			abort_unless($result, 404, "Does not exist name parameter" , ["Content-Type" => "application/json"]);
+		abort_unless($result, 418, "Does not exist name parameter" , ["Content-Type" => "application/json"]);
 
 		$name = $_REQUEST['name'];	
 		$userProfiles = UserProfile::where('id', $id)->update(['name' => $name]);
@@ -72,9 +71,9 @@ class UserProfilesController extends Controller
 	}
 
 	public function getProfilesByUserDB($id){
-	 	 $userProfiles = DB::table('user_profiles')->get()->where('user_id', $id);
-	 	 if (!$userProfile)
-			return response()->json(['code' => 404, 'message' => "Профили с user_id=$id не найдены"]);
+		$userProfiles = DB::table('user_profiles')->get()->where('user_id', $id);
+		abort_unless($userProfiles, 404, "Does not exist Profiles whith id=$id" , ["Content-Type" => "application/json"]);
+
 		return response()->json([
 						    "success" => true,
 						    "data" => [
@@ -94,9 +93,12 @@ class UserProfilesController extends Controller
 	}
 
 	public function patchProfileNameDB($id){
-		 $name = $_REQUEST['name'];	
-		 DB::table('user_profiles')->where('id', $id)->update(['name' => $name]);		 	 
-	 	 return $this->getProfileDB($id);
+		$result = array_key_exists('name', $_REQUEST);
+		abort_unless($result, 418, "Does not exist name parameter" , ["Content-Type" => "application/json"]);
+
+		$name = $_REQUEST['name'];	
+		DB::table('user_profiles')->where('id', $id)->update(['name' => $name]);		 	 
+		return $this->getProfileDB($id);
 	}
 
 	public function deleteProfileDB($id){
