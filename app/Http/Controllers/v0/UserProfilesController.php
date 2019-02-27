@@ -102,10 +102,11 @@ class UserProfilesController extends Controller
 	}
 
 	public function addUserToGroup($userId, $groupId){
-		$user = User::findOrFail($userId);
-		$group = UserGroup::findOrFail($userId);
-		$result = $group->users()->save($user);
-		return response()->json(["success"=> $result]);
+		$user = User::find($userId);
+		$group = UserGroup::find($groupId);
+		if ($user && $group)
+		   $result = $group->users()->save($user);
+		return response()->json(["success"=> $user && $group]);
 	}
 
 	public function deleteGroup($groupId){
@@ -113,9 +114,10 @@ class UserProfilesController extends Controller
 	}
 
 	public function deleteUsetByGroup($userId, $groupId){
-		$user = User::findOrFail($userId);
-		$group = UserGroup::findOrFail($userId);
-		$group->users()->delete($user);
-		return response()->json(["success"=> true]);
+		$user = User::find($userId);
+		$group = UserGroup::find($userId);
+		if ($user && $group)
+			$group->users()->delete($user);
+		return response()->json(["success"=> $user && $group]);
 	}
 }
