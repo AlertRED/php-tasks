@@ -10,4 +10,6 @@ class UserProfile extends Model
     protected $table = 'user_profiles';
     protected $fillable = ['name'];
     public $timestamps = false;
+
+    
 }

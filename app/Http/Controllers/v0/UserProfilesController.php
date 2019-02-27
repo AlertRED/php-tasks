@@ -5,7 +5,10 @@ namespace App\Http\Controllers\v0;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+
 use App\Models\User\UserProfile;
+use App\Models\User\UserGroup;
+use App\User;
 
 class UserProfilesController extends Controller
 {	
@@ -102,5 +105,44 @@ class UserProfilesController extends Controller
 	public function deleteProfileDB($id){
 	 	$result = DB::table('user_profiles')->where('id', $id)->delete();
 		return response()->json(["success"=> (bool)$result]);
+	}
+
+	public function postGroup(){
+		$name = self::getItemRequest('name');
+		$group = UserGroup::create(['name' => $name]);
+		return response()->json([
+							    "success" => true,
+							    "data" => [
+							    	"created_group" => $group
+							      ]
+							]);
+	}
+
+	public function getGroupsByUser($userId){
+		$groups = User::findOrFail($userId)->groups;
+		return response()->json([
+							    "success" => true,
+							    "data" => [
+							    	"groups" =>  $groups
+							      ]
+							]);
+	}
+
+	public function addUserToGroup($userId, $groupId){
+		$user = User::findOrFail($userId);
+		$group = UserGroup::findOrFail($userId);
+		$result = $group->users()->save($user);
+		return response()->json(["success"=> $result]);
+	}
+
+	public function deleteGroup($groupId){
+		return response()->json(["success"=> (bool) UserGroup::where('id', $groupId)->delete()]);
+	}
+
+	public function deleteUsetByGroup($userId, $groupId){
+		$user = User::findOrFail($userId);
+		$group = UserGroup::findOrFail($userId);
+		$group->users()->delete($user);
+		return response()->json(["success"=> true]);
 	}
 }
