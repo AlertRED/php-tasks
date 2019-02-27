@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 
 use App\Models\User\UserProfile;
 use App\Models\User\UserGroup;
+use App\Http\Requests\RequestGroup;
 use App\User;
 
 class UserProfilesController extends Controller
@@ -86,8 +87,9 @@ class UserProfilesController extends Controller
 		return response()->json(["success"=> (bool)$result]);
 	}
 
-	public function postGroup(){
-		$name = self::getItemRequest('name');
+	public function postGroup(Request $request){
+		$name = self::getItemRequest('name');		
+		$v = Validator::make($request, ['name' => 'required|unique:user_group|max:255']);
 		$group = UserGroup::create(['name' => $name]);
 		return self::generateJSON("created_group", $group);
 	}
