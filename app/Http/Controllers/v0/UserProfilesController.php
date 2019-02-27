@@ -20,36 +20,30 @@ class UserProfilesController extends Controller
 		return $_REQUEST[$field];
 	}
 
+	private function generateJSON($key, $value){
+		return response()->json([
+							    "success" => true,
+							    "data" => [
+							    	$key => $value
+							      ]
+							]);
+	}
+
 	public function getProfile(UserProfile $userProfile){
 		abort_unless($userProfile, 404, "Does not exist id=$userProfile" , ["Content-Type" => "application/json"]);
-		return response()->json([
-						    "success" => true,
-						    "data" => [
-						    	"profile" => $userProfile
-						      ]
-						]);
+		return self::generateJSON("profile", $userProfile);
 	}
 
 	public function getProfilesByUser($userId){
 		$userProfiles = UserProfile::where('user_id', $userId)->get();
 		abort_unless(filled($userProfiles), 404, "Does not exist Profiles whith id=$id" , ["Content-Type" => "application/json"]);
-		return response()->json([
-						    "success" => true,
-						    "data" => [
-						    	"profiles" => $userProfiles
-						      ]
-						]);
+		return self::generateJSON("profiles", $userProfiles);
 	}
 	
 	public function getAllProfiles(){
 			$page = self::getItemRequest('page');
 			$userProfiles = UserProfile::paginate(self::itemOnPage)->items();
-			return response()->json([
-							    "success" => true,
-							    "data" => [
-							    	"profiles" => $userProfiles
-							      ]
-							]);
+			return self::generateJSON("profiles", $userProfiles);
 		}
 
 	public function patchProfileName(UserProfile $userProfile){
@@ -65,35 +59,20 @@ class UserProfilesController extends Controller
 	public function getProfileDB($id){
 	 	$userProfile = DB::table('user_profiles')->where('id', $id)->first();
 		abort_unless($userProfile, 400, "Does not exist Profile whith id=$id" , ["Content-Type" => "application/json"]);
-		return response()->json([
-						    "success" => true,
-						    "data" => [
-						    	"profile" => $userProfile
-						      ]
-						]);
+		return self::generateJSON("profile", $userProfile);
 	}
 
 	public function getProfilesByUserDB($userId){
 		$userProfiles = DB::table('user_profiles')->where('user_id', $userId)->get();
 		abort_unless(filled($userProfiles), 404, "Does not exist Profiles whith userId=$userId" , ["Content-Type" => "application/json"]);
-		return response()->json([
-						    "success" => true,
-						    "data" => [
-						    	"profiles" => $userProfiles
-						      ]
-						]);
+		return self::generateJSON("profiles", $userProfiles);
 	}
 
 	public function getAllProfilesDB(){
 		 $page = self::getItemRequest('page');
 	 	 $userProfiles = DB::table('user_profiles')->paginate(self::itemOnPage)->items();
 	 	 abort_unless(filled($userProfiles) and $page, 404, "Does not exist Page" , ["Content-Type" => "application/json"]);
-	 	 return response()->json([
-							    "success" => true,
-							    "data" => [
-							    	"profiles" => $userProfiles
-							      ]
-							]);
+ 		return self::generateJSON("profiles", $userProfiles);
 	}
 
 	public function patchProfileNameDB($id){
@@ -110,22 +89,14 @@ class UserProfilesController extends Controller
 	public function postGroup(){
 		$name = self::getItemRequest('name');
 		$group = UserGroup::create(['name' => $name]);
-		return response()->json([
-							    "success" => true,
-							    "data" => [
-							    	"created_group" => $group
-							      ]
-							]);
+		return self::generateJSON("created_group", $group);
 	}
 
 	public function getGroupsByUser($userId){
 		$groups = User::findOrFail($userId)->groups;
-		return response()->json([
-							    "success" => true,
-							    "data" => [
-							    	"groups" =>  $groups
-							      ]
-							]);
+		foreach ($groups as $value)
+			unset($value["pivot"]);
+		return self::generateJSON("groups", $groups);
 	}
 
 	public function addUserToGroup($userId, $groupId){

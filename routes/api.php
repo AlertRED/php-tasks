@@ -32,10 +32,3 @@ Route::prefix('v0/db/')->group(function() {
 	Route::get('user/{userId}/profiles', 'v0\UserProfilesController@getProfilesByUserDB');
 	Route::get('users/profiles', 'v0\UserProfilesController@getAllProfilesDB');
 });
-
-
-
-
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
