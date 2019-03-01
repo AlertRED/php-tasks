@@ -1,8 +1,20 @@
 <?php
 
 use Illuminate\Http\Request;
+use \App\Http\Middleware\StopBanned;
+use \App\Http\Middleware\AdminOnly;
 
 
+// Route::group(['prefix' => 'v1/'], function(){
+//         Route::get('auth/login', 'v1\UserAuthController@UserAuth')
+//     });
+
+Route::prefix('v1/')->group(function() {
+	 Route::get('auth/login', 'v1\UserAuthController@userLogin');
+	 Route::get('auth/logout', 'v1\UserAuthController@userLogout');
+	 Route::get('users', 'v1\UserAuthController@getUsers')->middleware(StopBanned::class)->middleware(AdminOnly::class);
+	 Route::patch('user/{userId}', 'v1\UserAuthController@patchUser')->middleware(StopBanned::class)->middleware(AdminOnly::class);
+});
 
 Route::prefix('v0/')->group(function() {
 	# работа с профилями
