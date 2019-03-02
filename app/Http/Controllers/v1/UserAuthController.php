@@ -6,6 +6,9 @@ use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use App\Transformers\UserTransformer;
+
+
 class UserAuthController extends Controller
 {
 
@@ -38,17 +41,10 @@ class UserAuthController extends Controller
     public function getUsers(Request $request)
     {
         $users = User::paginate(self::itemOnPage)->items();
-
-        $new_users = [];
-        foreach ($users as $value)
-            $new_users[] = 
-            ['id' => $value['id'],
-            'name' => $value['name'],
-            'email' => $value['email'],
-            'role' => $value['role'],
-            'banned' => $value['banned']];
-
-        return self::generateJSON('users', $new_users);
+        $format_users = [];
+        foreach ($users as $user) 
+            $format_users[] = fractal()->item($user)->transformWith(new UserTransformer)->toArray()['data'];
+        return self::generateJSON('users', $format_users);
     } 
 
     public function patchUser(Request $request, $userId)
@@ -57,13 +53,7 @@ class UserAuthController extends Controller
         if ($user){ 
             $user = $user->update(['role' => $request['role'], 'name' => $request['name'], 'banned' => $request['banned']]);
             $user = User::where('id', $userId)->first();
-
-            $user = ['id' => $user['id'],
-            'name' => $user['name'],
-            'email' => $user['email'],
-            'role' => $user['role'],
-            'banned' => $user['banned']];
-
+            $user = fractal()->item($user)->transformWith(new UserTransformer)->toArray()['data'];
             return self::generateJSON('user', $user);
         }
         abort(404);
