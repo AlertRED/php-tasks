@@ -7,19 +7,14 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 use App\Models\User\UserProfile;
-use App\Models\User\UserGroup;
-use App\Http\Requests\RequestGroup;
 use App\User;
+use Validator;
+
 
 class UserProfilesController extends Controller
 {	
 	const itemOnPage = 5;
 
-	private function getItemRequest(string $field){
-		$result = array_key_exists($field, $_REQUEST);
-		abort_unless($result, 400, "Missing required parameter $field" , ["Content-Type" => "application/json"]);
-		return $_REQUEST[$field];
-	}
 
 	private function generateJSON($key, $value){
 		return response()->json([
@@ -41,14 +36,16 @@ class UserProfilesController extends Controller
 		return self::generateJSON("profiles", $userProfiles);
 	}
 	
-	public function getAllProfiles(){
-			$page = self::getItemRequest('page');
+	public function getAllProfiles(Request $request){
+			Validator::make($request->all(), ['page' => 'required|min:1'])->validate();
+			$page = $request['page'];
 			$userProfiles = UserProfile::paginate(self::itemOnPage)->items();
 			return self::generateJSON("profiles", $userProfiles);
 		}
 
-	public function patchProfileName(UserProfile $userProfile){
-		$name = self::getItemRequest('name');
+	public function patchProfileName(Request $request, UserProfile $userProfile){
+		Validator::make($request->all(), ['name' => 'required|unique:user_profiles|max:255'])->validate();
+		$name = $request['name'];
 		$userProfile->update(['name' => $name]);
 		return self::getProfile($userProfile);
 	}
@@ -70,14 +67,16 @@ class UserProfilesController extends Controller
 	}
 
 	public function getAllProfilesDB(){
-		 $page = self::getItemRequest('page');
+		 Validator::make($request->all(), ['page' => 'required|min:1'])->validate();
+		 $page = $request['page'];
 	 	 $userProfiles = DB::table('user_profiles')->paginate(self::itemOnPage)->items();
 	 	 abort_unless(filled($userProfiles) and $page, 404, "Does not exist Page" , ["Content-Type" => "application/json"]);
  		return self::generateJSON("profiles", $userProfiles);
 	}
 
 	public function patchProfileNameDB($id){
-		$name = self::getItemRequest('name');
+		Validator::make($request->all(), ['name' => 'required|unique:user_profiles|max:255'])->validate();
+		$name = $request['name'];
 		DB::table('user_profiles')->where('id', $id)->update(['name' => $name]);		 	 
 		return $this->getProfileDB($id);
 	}
@@ -87,37 +86,4 @@ class UserProfilesController extends Controller
 		return response()->json(["success"=> (bool)$result]);
 	}
 
-	public function postGroup(Request $request){
-		$name = self::getItemRequest('name');		
-		$v = Validator::make($request, ['name' => 'required|unique:user_group|max:255']);
-		$group = UserGroup::create(['name' => $name]);
-		return self::generateJSON("created_group", $group);
-	}
-
-	public function getGroupsByUser($userId){
-		$groups = User::findOrFail($userId)->groups;
-		foreach ($groups as $value)
-			unset($value["pivot"]);
-		return self::generateJSON("groups", $groups);
-	}
-
-	public function addUserToGroup($userId, $groupId){
-		$user = User::find($userId);
-		$group = UserGroup::find($groupId);
-		if ($user && $group)
-		   $result = $group->users()->save($user);
-		return response()->json(["success"=> $user && $group]);
-	}
-
-	public function deleteGroup($groupId){
-		return response()->json(["success"=> (bool) UserGroup::where('id', $groupId)->delete()]);
-	}
-
-	public function deleteUsetByGroup($userId, $groupId){
-		$user = User::find($userId);
-		$group = UserGroup::find($userId);
-		if ($user && $group)
-			$group->users()->delete($user);
-		return response()->json(["success"=> $user && $group]);
-	}
 }
