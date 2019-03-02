@@ -7,6 +7,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Transformers\UserTransformer;
+use App\Http\Requests\RequestGetUsers;
+use App\Http\Requests\RequestPatchUser;
+
+use Validator;
 
 
 class UserAuthController extends Controller
@@ -38,7 +42,7 @@ class UserAuthController extends Controller
         }
         abort(404);
     }
-    public function getUsers(Request $request)
+    public function getUsers(RequestGetUsers $request)
     {
         $users = User::paginate(self::itemOnPage)->items();
         $format_users = [];
@@ -47,15 +51,15 @@ class UserAuthController extends Controller
         return self::generateJSON('users', $format_users);
     } 
 
-    public function patchUser(Request $request, $userId)
+    public function patchUser(RequestPatchUser $request, $userId)
     {
         $user = User::where('id', $userId)->first();
-        if ($user){ 
-            $user = $user->update(['role' => $request['role'], 'name' => $request['name'], 'banned' => $request['banned']]);
-            $user = User::where('id', $userId)->first();
-            $user = fractal()->item($user)->transformWith(new UserTransformer)->toArray()['data'];
-            return self::generateJSON('user', $user);
-        }
-        abort(404);
+        
+        abort_unless($user, 404);
+
+        $user = $user->update(['role' => $request['role'], 'name' => $request['name'], 'banned' => $request['banned']]);
+        $user = User::where('id', $userId)->first();
+        $user = fractal()->item($user)->transformWith(new UserTransformer)->toArray()['data'];
+        return self::generateJSON('user', $user);
     }
 }
