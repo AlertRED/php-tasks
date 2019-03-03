@@ -14,7 +14,6 @@ class Task1Controller extends Controller
     }
 
     public function uuid(Request $request){
-    	try {
     		$uuid1 = Uuid::uuid1();
     		
     		return response()->json([
@@ -23,14 +22,9 @@ class Task1Controller extends Controller
 			    	"uuid" => $uuid1
 			      ]
 			]);
-    	} catch (Exception $e) {
-    		return $e;
-    	}
-    	
     }
 
     public function data_from_config(Request $request){
-    	try {
 			return response()->json([
 						    "success" => true,
 						    "data" => [
@@ -39,9 +33,6 @@ class Task1Controller extends Controller
 						    		]
 						      ]
 						]);
-	    } catch (Exception $e) {
-	    	return $e;
-	    }
 	}
 
 }
