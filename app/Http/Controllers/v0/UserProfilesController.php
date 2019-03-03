@@ -32,7 +32,7 @@ class UserProfilesController extends Controller
 
 	public function getProfilesByUser($userId){
 		$userProfiles = UserProfile::where('user_id', $userId)->get();
-		abort_unless(filled($userProfiles), 404, "Does not exist Profiles whith id=$id" , ["Content-Type" => "application/json"]);
+		abort_unless(filled($userProfiles), 404, "Does not exist Profiles whith id=$userId" , ["Content-Type" => "application/json"]);
 		return self::generateJSON("profiles", $userProfiles);
 	}
 	
@@ -62,7 +62,6 @@ class UserProfilesController extends Controller
 
 	public function getProfilesByUserDB($userId){
 		$userProfiles = DB::table('user_profiles')->where('user_id', $userId)->get();
-		abort_unless(filled($userProfiles), 404, "Does not exist Profiles whith userId=$userId" , ["Content-Type" => "application/json"]);
 		return self::generateJSON("profiles", $userProfiles);
 	}
 
