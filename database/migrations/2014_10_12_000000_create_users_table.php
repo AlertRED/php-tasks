@@ -21,6 +21,10 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+
+            $table->string('api_token');
+            $table->boolean('banned')->default(false);
+            $table->enum('role',array('User', 'Admin'))->default('User');
         });
     }
 
