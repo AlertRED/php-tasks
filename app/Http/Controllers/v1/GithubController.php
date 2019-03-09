@@ -12,6 +12,8 @@ use App\Http\Requests\RequestRepositories;
 use App\Http\Requests\RequestIssuesSearch;
 use App\Http\Requests\RequestRepositoriesSearch;
 
+use Illuminate\Support\Facades\Redis;
+
 use Validator;
 
 
@@ -19,10 +21,12 @@ class GithubController extends Controller
 {
 
 	private $client;
+	private $redis;
 
     public function __construct()
     {
         $this->client = new \Github\Client();
+        $this->redis = Redis::connection();
     }
 
 	private function generateJSON($key, $value){
@@ -83,16 +87,19 @@ class GithubController extends Controller
 		$language = isset($request['language']) ? sprintf(' language:%s', $request['language']):'';
 		$private = $request->input('private','');
 
-		echo $title.' user:'.$userName.$language;
+		$find_string = __FUNCTION__.$userName.$title.$language.$private;
+		$repos_format = json_decode($this->redis->get($find_string));
+		if (!$repos_format){
+			$repos = $this->client->api('search')->repositories($title.' user:'.$userName.$language)['items'];
+			$repos_format = [];
 
-		$repos = $this->client->api('search')->repositories($title.' user:'.$userName.$language)['items'];
-		$repos_format = [];
-
-		foreach ($repos as $key => $rep) {
-			if (($rep['private']?'false':'true') != $private)
-				$repos_format[] = self::getFormatItem($rep, ['id' => 'id' ,'name' => 'name','description'=>'description', 'private'=>'private', 'language'=>'language']);
+			foreach ($repos as $key => $rep) {
+				if (($rep['private']?'false':'true') != $private)
+					$repos_format[] = self::getFormatItem($rep, ['id' => 'id' ,'name' => 'name','description'=>'description', 'private'=>'private', 'language'=>'language']);
+			}
+			$this->redis->set($find_string, json_encode($repos_format));
 		}
-			
+
 		return self::generateJSON("repositories", $repos_format);
 	}
 }
