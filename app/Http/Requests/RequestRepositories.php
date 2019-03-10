@@ -23,8 +23,10 @@ class RequestRepositories extends FormRequest
      */
     public function rules()
     {
-        return ['fromDb' => 'required',
-                'page'   => 'required',
-                'perPage'=> 'required'];
+        return [
+                'fromDb' => 'required|boolean',
+                'page'   => 'required|string',
+                'perPage'=> 'required|integer|min:1|max:10'
+                ];
     }
 }

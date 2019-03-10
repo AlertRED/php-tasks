@@ -24,12 +24,12 @@ class RequestIssuesSearch extends FormRequest
     public function rules()
     {
         return [
-            // 'title' => 'required',
-            //     'state'   => 'required',
-            //     'number'=> 'required',
-                'fromDb' => 'required',
-                'page'   => 'required',
-                'perPage'=> 'required'
+                'title' => 'string',
+                'state'   => 'string',
+                'number'=> 'integer',
+                'fromDb' => 'required|boolean',
+                'page'   => 'required|string',
+                'perPage'=> 'required|integer|min:1|max:10'
             ];
     }
 }
