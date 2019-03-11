@@ -8,7 +8,7 @@ Route::prefix('/task1')->group(function() {
 
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('layouts\app');
 });
 
 
