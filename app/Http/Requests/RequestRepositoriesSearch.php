@@ -24,12 +24,12 @@ class RequestRepositoriesSearch extends FormRequest
     public function rules()
     {
         return [
-            // 'fromDb' => 'required',
-            //     'page'   => 'required',
-            //     'perPage'=> 'required',
-                // 'title' => 'required',
-                // 'private'   => 'required',
-                // 'language'=> 'required'
+                'fromDb' => 'required|boolean',
+                'page'   => 'required|string',
+                'perPage'=> 'required|integer|min:1|max:10',
+                'title' => 'string',
+                'private'   => 'boolean',
+                'language'=> 'string'
             ];
     }
 }
