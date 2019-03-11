@@ -13,7 +13,7 @@ use Validator;
 class UserGroupController extends Controller
 {	
 
-	private function generateJSON($key, $value){
+	private static function generateJSON($key, $value){
 		return response()->json([
 							    "success" => true,
 							    "data" => [
@@ -22,7 +22,7 @@ class UserGroupController extends Controller
 							]);
 	}
 
-	public function postGroup(Request $request){
+	public static function postGroup(Request $request){
 		Validator::make($request->all(), ['name' => 'required|unique:user_group|max:255'])->validate();
 		$name = $request['name'];
 		$group = UserGroup::create(['name' => $name]);
@@ -44,7 +44,7 @@ class UserGroupController extends Controller
 		return response()->json(["success"=> $user && $group]);
 	}
 
-	public function deleteGroup($groupId){
+	public static function deleteGroup($groupId){
 		return response()->json(["success"=> (bool) UserGroup::where('id', $groupId)->delete()]);
 	}
 
