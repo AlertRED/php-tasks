@@ -16,7 +16,7 @@ class UserProfilesController extends Controller
 	const itemOnPage = 5;
 
 
-	private function generateJSON($key, $value){
+	private static function generateJSON($key, $value){
 		return response()->json([
 							    "success" => true,
 							    "data" => [
@@ -25,7 +25,15 @@ class UserProfilesController extends Controller
 							]);
 	}
 
-	public function getProfile(UserProfile $userProfile){
+	public static function postProfile(Request $request){
+		Validator::make($request->all(), ['name' => 'required|unique:user_profiles|max:255'])->validate();
+		$name = $request['name'];
+		$user_id = $request['user_id'];
+		$profile = UserProfile::create(['name' => $name, 'user_id' => $user_id]);
+		return self::generateJSON("created_profile", $profile);
+	}
+
+	public static function getProfile(UserProfile $userProfile){
 		abort_unless($userProfile, 404, "Does not exist id=$userProfile" , ["Content-Type" => "application/json"]);
 		return self::generateJSON("profile", $userProfile);
 	}
@@ -43,14 +51,14 @@ class UserProfilesController extends Controller
 			return self::generateJSON("profiles", $userProfiles);
 		}
 
-	public function patchProfileName(Request $request, UserProfile $userProfile){
+	public static function patchProfileName(Request $request, UserProfile $userProfile){
 		Validator::make($request->all(), ['name' => 'required|unique:user_profiles|max:255'])->validate();
 		$name = $request['name'];
 		$userProfile->update(['name' => $name]);
 		return self::getProfile($userProfile);
 	}
 
-	public function deleteProfile(UserProfile $userProfile){
+	public static function deleteProfile(UserProfile $userProfile){
 		return response()->json(["success"=> (bool) $userProfile->delete()]);
 	}
 
