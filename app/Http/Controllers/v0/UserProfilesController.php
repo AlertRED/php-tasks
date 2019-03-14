@@ -9,68 +9,63 @@ use App\Http\Controllers\Controller;
 use App\Models\User\UserProfile;
 use App\User;
 use Validator;
+use App\BaseFunctions;
+use App\Mail\patchProfile;
 
 
 class UserProfilesController extends Controller
 {	
 	const itemOnPage = 5;
 
-
-	private static function generateJSON($key, $value){
-		return response()->json([
-							    "success" => true,
-							    "data" => [
-							    	$key => $value
-							      ]
-							]);
-	}
-
 	public static function postProfile(Request $request){
 		Validator::make($request->all(), ['name' => 'required|unique:user_profiles|max:255'])->validate();
 		$name = $request['name'];
 		$user_id = $request['user_id'];
 		$profile = UserProfile::create(['name' => $name, 'user_id' => $user_id]);
-		return self::generateJSON("created_profile", $profile);
+		return BaseFunctions::generateJSON(true, "created_profile", $profile);
 	}
 
 	public static function getProfile(UserProfile $userProfile){
 		abort_unless($userProfile, 404, "Does not exist id=$userProfile" , ["Content-Type" => "application/json"]);
-		return self::generateJSON("profile", $userProfile);
+		return BaseFunctions::generateJSON(true, "profile", $userProfile);
 	}
 
 	public function getProfilesByUser($userId){
 		$userProfiles = UserProfile::where('user_id', $userId)->get();
 		abort_unless(filled($userProfiles), 404, "Does not exist Profiles whith id=$userId" , ["Content-Type" => "application/json"]);
-		return self::generateJSON("profiles", $userProfiles);
+		return BaseFunctions::generateJSON(true, "profiles", $userProfiles);
 	}
 	
 	public function getAllProfiles(Request $request){
-			Validator::make($request->all(), ['page' => 'required|min:1'])->validate();
-			$page = $request['page'];
-			$userProfiles = UserProfile::paginate(self::itemOnPage)->items();
-			return self::generateJSON("profiles", $userProfiles);
-		}
+		Validator::make($request->all(), ['page' => 'required|min:1'])->validate();
+		$page = $request['page'];
+		$userProfiles = UserProfile::paginate(self::itemOnPage)->items();
+		return BaseFunctions::generateJSON(true, "profiles", $userProfiles);
+	}
 
 	public static function patchProfileName(Request $request, UserProfile $userProfile){
 		Validator::make($request->all(), ['name' => 'required|unique:user_profiles|max:255'])->validate();
 		$name = $request['name'];
+		$oldProfile = clone $userProfile;
 		$userProfile->update(['name' => $name]);
-		return self::getProfile($userProfile);
+		if ($userProfile)
+			BaseFunctions::sendMailToAdmin(new patchProfile($oldProfile, $userProfile));
+		return  self::getProfile($userProfile);
 	}
 
 	public static function deleteProfile(UserProfile $userProfile){
-		return response()->json(["success"=> (bool) $userProfile->delete()]);
+		return BaseFunctions::generateJSON((bool) $userProfile->delete());
 	}
 
 	public function getProfileDB($id){
 	 	$userProfile = DB::table('user_profiles')->where('id', $id)->first();
 		abort_unless($userProfile, 400, "Does not exist Profile whith id=$id" , ["Content-Type" => "application/json"]);
-		return self::generateJSON("profile", $userProfile);
+		return BaseFunctions::generateJSON("profile", $userProfile);
 	}
 
 	public function getProfilesByUserDB($userId){
 		$userProfiles = DB::table('user_profiles')->where('user_id', $userId)->get();
-		return self::generateJSON("profiles", $userProfiles);
+		return BaseFunctions::generateJSON("profiles", $userProfiles);
 	}
 
 	public function getAllProfilesDB(){
@@ -78,7 +73,7 @@ class UserProfilesController extends Controller
 		 $page = $request['page'];
 	 	 $userProfiles = DB::table('user_profiles')->paginate(self::itemOnPage)->items();
 	 	 abort_unless(filled($userProfiles) and $page, 404, "Does not exist Page" , ["Content-Type" => "application/json"]);
- 		return self::generateJSON("profiles", $userProfiles);
+ 		return BaseFunctions::generateJSON("profiles", $userProfiles);
 	}
 
 	public function patchProfileNameDB($id){
@@ -89,8 +84,7 @@ class UserProfilesController extends Controller
 	}
 
 	public function deleteProfileDB($id){
-	 	$result = DB::table('user_profiles')->where('id', $id)->delete();
-		return response()->json(["success"=> (bool)$result]);
+		return BaseFunctions::generateJSON((bool) DB::table('user_profiles')->where('id', $id)->delete());
 	}
 
 }

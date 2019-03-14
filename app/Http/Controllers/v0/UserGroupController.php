@@ -10,30 +10,26 @@ use App\Http\Requests\RequestGroup;
 use App\User;
 use Validator;
 
+use App\Mail\addGroup;
+use Illuminate\Mail\Mailable;
+use App\BaseFunctions;
+
 class UserGroupController extends Controller
 {	
-
-	private static function generateJSON($key, $value){
-		return response()->json([
-							    "success" => true,
-							    "data" => [
-							    	$key => $value
-							      ]
-							]);
-	}
-
+	
 	public static function postGroup(Request $request){
 		Validator::make($request->all(), ['name' => 'required|unique:user_group|max:255'])->validate();
 		$name = $request['name'];
 		$group = UserGroup::create(['name' => $name]);
-		return self::generateJSON("created_group", $group);
+		BaseFunctions::sendMailToAdmin(new addGroup($group));
+		return BaseFunctions::generateJSON(true, "created_group", $group);
 	}
 
 	public function getGroupsByUser($userId){
 		$groups = User::findOrFail($userId)->groups;
 		foreach ($groups as $value)
 			unset($value["pivot"]);
-		return self::generateJSON("groups", $groups);
+		return BaseFunctions::generateJSON(true, "groups", $groups);
 	}
 
 	public function addUserToGroup($userId, $groupId){
@@ -41,11 +37,11 @@ class UserGroupController extends Controller
 		$group = UserGroup::find($groupId);
 		if ($user && $group)
 		   $result = $group->users()->save($user);
-		return response()->json(["success"=> $user && $group]);
+		return BaseFunctions::generateJSON($user && $group);
 	}
 
 	public static function deleteGroup($groupId){
-		return response()->json(["success"=> (bool) UserGroup::where('id', $groupId)->delete()]);
+		return BaseFunctions::generateJSON((bool) UserGroup::where('id', $groupId)->delete());
 	}
 
 	public function deleteUsetByGroup($userId, $groupId){
@@ -53,6 +49,6 @@ class UserGroupController extends Controller
 		$group = UserGroup::find($userId);
 		if ($user && $group)
 			$group->users()->delete($user);
-		return response()->json(["success"=> $user && $group]);
+		return BaseFunctions::generateJSON($user && $group);
 	}
 }

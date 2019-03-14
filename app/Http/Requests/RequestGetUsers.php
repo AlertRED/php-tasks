@@ -18,7 +18,7 @@ class RequestGetUsers extends FormRequest
             'api_token' => 'required',
             'page' => 'required',
             'email' => 'required',
-            'password' => 'required',
+            'password' => 'required'
         ];
     }
 }
