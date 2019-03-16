@@ -22,8 +22,10 @@ class UserAuthController extends Controller
 
     public function userLogin(Request $request)
     {
-        $api_token = User::where('email', $request['email'])->first()['api_token'];
-        return BaseFunctions::generateJSON(true ,'token', $api_token);
+        $user = User::where('email', $request['email'])->first();
+        abort_unless($user && password_verify($request['password'],$user['password']), 404);
+        return BaseFunctions::generateJSON(true ,'token', $user['api_token']);
+
     }
 
     public function userLogout(Request $request)

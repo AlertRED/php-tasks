@@ -35,9 +35,11 @@ class UserGroupController extends Controller
 	public function addUserToGroup($userId, $groupId){
 		$user = User::find($userId);
 		$group = UserGroup::find($groupId);
-		if ($user && $group)
+		if ($user && $group){
 		   $result = $group->users()->save($user);
-		return BaseFunctions::generateJSON($user && $group);
+		   return BaseFunctions::generateJSON($user && $group);
+		}
+		abort(404);
 	}
 
 	public static function deleteGroup($groupId){
@@ -47,8 +49,10 @@ class UserGroupController extends Controller
 	public function deleteUsetByGroup($userId, $groupId){
 		$user = User::find($userId);
 		$group = UserGroup::find($userId);
-		if ($user && $group)
+		if ($user && $group){
 			$group->users()->delete($user);
-		return BaseFunctions::generateJSON($user && $group);
+			return BaseFunctions::generateJSON($user && $group);
+		}
+		abort(404);
 	}
 }
