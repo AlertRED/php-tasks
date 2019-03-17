@@ -17,6 +17,28 @@ use App\BaseFunctions;
 class UserGroupController extends Controller
 {	
 	
+
+	/**
+     * @SWG\POST(
+     *     path="/users/group",
+     *     summary="Создать новую группу",
+     *     tags={"Group"},
+     *		@SWG\Parameter(
+     *         name="name",
+     *         in="query",
+     *         description="Имя новой группы",
+     *         required=true,
+     *         type="string",
+     *     ),
+     *	   @SWG\Response(
+     *         response="200",
+     *         description="Successful operation",
+     *		   examples={"":{ 
+	 *        			"success": true
+	 *		  		}
+	 *			}),
+     * )
+     */
 	public static function postGroup(Request $request){
 		Validator::make($request->all(), ['name' => 'required|unique:user_group|max:255'])->validate();
 		$name = $request['name'];
@@ -25,6 +47,33 @@ class UserGroupController extends Controller
 		return BaseFunctions::generateJSON(true, "created_group", $group);
 	}
 
+	/**
+     * @SWG\GET(
+     *     path="/user/{userId}/groups",
+     *     summary="Получить группы пользователя",
+     *     tags={"Group"},
+     *	   @SWG\Parameter(
+     *         name="userId",
+     *         in="path",
+     *         description="ID пользователя",
+     *         required=true,
+     *         type="integer",
+     *     ),
+     *	   @SWG\Response(
+     *         response="200",
+     *         description="Successful operation",
+     *			examples={"":{ 
+	 *        			"success": true, 
+	 *					"data":{
+	 *					"groups": {
+	 *		                "id": 9,
+	 *		                "name": "Group1"
+	 *		            		  },
+	 *						  }	
+     *					  }}
+     *		)
+     * )
+     */
 	public function getGroupsByUser($userId){
 		$groups = User::findOrFail($userId)->groups;
 		foreach ($groups as $value)
@@ -32,6 +81,34 @@ class UserGroupController extends Controller
 		return BaseFunctions::generateJSON(true, "groups", $groups);
 	}
 
+	/**
+     * @SWG\PATCH(
+     *     path="/user/{userId}/group/{groupId}",
+     *     summary="Добавление пользователя к группе",
+     *     tags={"Group"},
+     *		@SWG\Parameter(
+     *         name="userId",
+     *         in="path",
+     *         description="ID пользователя",
+     *         required=true,
+     *         type="integer",
+     *     ),
+     *		@SWG\Parameter(
+     *         name="groupId",
+     *         in="path",
+     *         description="ID группы",
+     *         required=true,
+     *         type="integer",
+     *     ),
+     *	   @SWG\Response(
+     *         response="200",
+     *         description="Successful operation",
+     *		   examples={"":{ 
+	 *        			"success": true
+	 *		  		}
+	 *			}),
+     * )
+     */
 	public function addUserToGroup($userId, $groupId){
 		$user = User::find($userId);
 		$group = UserGroup::find($groupId);
@@ -42,10 +119,60 @@ class UserGroupController extends Controller
 		abort(404);
 	}
 
+	/**
+     * @SWG\DELETE(
+     *     path="/users/groups/{groupId}",
+     *     summary="Удалить группу",
+     *     tags={"Group"},
+     *		@SWG\Parameter(
+     *         name="groupId",
+     *         in="path",
+     *         description="Имя группы",
+     *         required=true,
+     *         type="integer",
+     *     ),
+     *	   @SWG\Response(
+     *         response="200",
+     *         description="Successful operation",
+     *		   examples={"":{ 
+	 *        			"success": true
+	 *		  		}
+	 *			}),
+     * )
+     */
+
 	public static function deleteGroup($groupId){
 		return BaseFunctions::generateJSON((bool) UserGroup::where('id', $groupId)->delete());
 	}
 
+	/**
+     * @SWG\DELETE(
+     *     path="/user/{userId}/group/{groupId}",
+     *     summary="Удаление пользователя из группы",
+     *     tags={"Group"},
+     *		@SWG\Parameter(
+     *         name="userId",
+     *         in="path",
+     *         description="ID пользователя",
+     *         required=true,
+     *         type="integer",
+     *     ),
+     *		@SWG\Parameter(
+     *         name="groupId",
+     *         in="path",
+     *         description="ID группы",
+     *         required=true,
+     *         type="integer",
+     *     ),
+     *	   @SWG\Response(
+     *         response="200",
+     *         description="Successful operation",
+     *		   examples={"":{ 
+	 *        			"success": true
+	 *		  		}
+	 *			}),
+     * )
+     */
 	public function deleteUsetByGroup($userId, $groupId){
 		$user = User::find($userId);
 		$group = UserGroup::find($userId);

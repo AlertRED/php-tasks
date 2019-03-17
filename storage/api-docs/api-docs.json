@@ -1,0 +1,394 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Blog posts API",
+        "version": "1.0.0"
+    },
+    "host": "localhost:8000",
+    "basePath": "/",
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "/users/group": {
+            "post": {
+                "tags": [
+                    "Group"
+                ],
+                "summary": "\u0421\u043e\u0437\u0434\u0430\u0442\u044c \u043d\u043e\u0432\u0443\u044e \u0433\u0440\u0443\u043f\u043f\u0443",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "\u0418\u043c\u044f \u043d\u043e\u0432\u043e\u0439 \u0433\u0440\u0443\u043f\u043f\u044b",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "examples": {
+                            "": {
+                                "success": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/{userId}/groups": {
+            "get": {
+                "tags": [
+                    "Group"
+                ],
+                "summary": "\u041f\u043e\u043b\u0443\u0447\u0438\u0442\u044c \u0433\u0440\u0443\u043f\u043f\u044b \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "ID \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "examples": {
+                            "": {
+                                "success": true,
+                                "data": {
+                                    "groups": {
+                                        "id": 9,
+                                        "name": "Group1"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/{userId}/group/{groupId}": {
+            "delete": {
+                "tags": [
+                    "Group"
+                ],
+                "summary": "\u0423\u0434\u0430\u043b\u0435\u043d\u0438\u0435 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f \u0438\u0437 \u0433\u0440\u0443\u043f\u043f\u044b",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "ID \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "groupId",
+                        "in": "path",
+                        "description": "ID \u0433\u0440\u0443\u043f\u043f\u044b",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "examples": {
+                            "": {
+                                "success": true
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Group"
+                ],
+                "summary": "\u0414\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0438\u0435 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f \u043a \u0433\u0440\u0443\u043f\u043f\u0435",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "ID \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "groupId",
+                        "in": "path",
+                        "description": "ID \u0433\u0440\u0443\u043f\u043f\u044b",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "examples": {
+                            "": {
+                                "success": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/groups/{groupId}": {
+            "delete": {
+                "tags": [
+                    "Group"
+                ],
+                "summary": "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u0433\u0440\u0443\u043f\u043f\u0443",
+                "parameters": [
+                    {
+                        "name": "groupId",
+                        "in": "path",
+                        "description": "\u0418\u043c\u044f \u0433\u0440\u0443\u043f\u043f\u044b",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "examples": {
+                            "": {
+                                "success": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "get": {
+                "tags": [
+                    "UserAuth"
+                ],
+                "summary": "\u0412\u0445\u043e\u0434",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Email \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "\u041f\u0430\u0440\u043e\u043b\u044c \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "examples": {
+                            "": {
+                                "success": true,
+                                "data": {
+                                    "token": "BAeURuQs7BZ8zGyBF57JDaXh2HqUwdcN"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "get": {
+                "tags": [
+                    "UserAuth"
+                ],
+                "summary": "\u0412\u044b\u0445\u043e\u0434",
+                "parameters": [
+                    {
+                        "name": "api_token",
+                        "in": "query",
+                        "description": "Api_token \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "examples": {
+                            "": {
+                                "success": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "tags": [
+                    "UserAuth"
+                ],
+                "summary": "\u041f\u043e\u043b\u0443\u0447\u0438\u0442\u044c \u0441\u043f\u0438\u0441\u043e\u043a \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0435\u0439",
+                "parameters": [
+                    {
+                        "name": "api_token",
+                        "in": "query",
+                        "description": "Api_token \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Email \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "\u041f\u0430\u0440\u043e\u043b\u044c \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "\u0421\u0442\u0440\u0430\u043d\u0438\u0446\u0430 \u0441\u043f\u0438\u0441\u043a\u0430",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "examples": {
+                            "": {
+                                "success": true,
+                                "data": {
+                                    "id": 4,
+                                    "name": "nyqj8NdeYB",
+                                    "email": "0DRR9VJtVN@mail.ru",
+                                    "role": "User",
+                                    "banned": false
+                                },
+                                "0": {
+                                    "id": 5,
+                                    "name": "ElUqT66dSG",
+                                    "email": "Xpt4kijhPC@mail.ru",
+                                    "role": "User",
+                                    "banned": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/{userId}": {
+            "patch": {
+                "tags": [
+                    "UserAuth"
+                ],
+                "summary": "\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c \u0434\u0430\u043d\u043d\u044b\u0435 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "ID \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "role",
+                        "in": "query",
+                        "description": "\u041d\u043e\u0432\u0430\u044f \u0440\u043e\u043b\u044c \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "\u041d\u043e\u0432\u043e\u0435 \u0438\u043c\u044f \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "banned",
+                        "in": "query",
+                        "description": "\u041d\u043e\u0432\u044b\u0439 \u0441\u0442\u0430\u0442\u0443\u0441 \u0431\u0430\u043d\u0430 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f",
+                        "required": true,
+                        "type": "boolean"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "examples": {
+                            "": {
+                                "success": true,
+                                "data": {
+                                    "id": 4,
+                                    "name": "nyqj8NdeYB",
+                                    "email": "0DRR9VJtVN@mail.ru",
+                                    "role": "User",
+                                    "banned": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "UserGroup": {
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Group 1"
+                },
+                "timestamps": {
+                    "type": "bool",
+                    "example": false
+                }
+            }
+        },
+        "User": {
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Group 1"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "qwerty@mail.ru"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "qwerty"
+                },
+                "banned": {
+                    "type": "bool",
+                    "example": false
+                },
+                "role": {
+                    "type": "string",
+                    "example": "User"
+                }
+            }
+        }
+    }
+}

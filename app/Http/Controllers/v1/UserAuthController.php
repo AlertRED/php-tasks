@@ -20,6 +20,37 @@ class UserAuthController extends Controller
 
     const itemOnPage = 5;
 
+    /**
+     * @SWG\GET(
+     *     path="/auth/login",
+     *     summary="Вход",
+     *     tags={"UserAuth"},
+     *      @SWG\Parameter(
+     *         name="email",
+     *         in="query",
+     *         description="Email пользователя",
+     *         required=true,
+     *         type="string",
+     *     ),
+     *      @SWG\Parameter(
+     *         name="password",
+     *         in="query",
+     *         description="Пароль пользователя",
+     *         required=true,
+     *         type="string",
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Successful operation",
+     *         examples={"":{
+     *                       "success": true,
+     *                       "data": {
+     *                           "token": "BAeURuQs7BZ8zGyBF57JDaXh2HqUwdcN"
+     *                       }
+     *                   }
+     *          }),
+     * )
+     */
     public function userLogin(Request $request)
     {
         $user = User::where('email', $request['email'])->first();
@@ -28,6 +59,27 @@ class UserAuthController extends Controller
 
     }
 
+    /**
+     * @SWG\GET(
+     *     path="/auth/logout",
+     *     summary="Выход",
+     *     tags={"UserAuth"},
+     *      @SWG\Parameter(
+     *         name="api_token",
+     *         in="query",
+     *         description="Api_token пользователя",
+     *         required=true,
+     *         type="string",
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Successful operation",
+     *         examples={"":{
+     *                       "success": true,
+     *                   }
+     *          }),
+     * )
+     */
     public function userLogout(Request $request)
     {   
         $user = User::where('api_token', $request['api_token'])->first();
@@ -38,6 +90,64 @@ class UserAuthController extends Controller
         abort(404);
     }
 
+    /**
+     * @SWG\GET(
+     *     path="/users",
+     *     summary="Получить список пользователей",
+     *     tags={"UserAuth"},
+     *      @SWG\Parameter(
+     *         name="api_token",
+     *         in="query",
+     *         description="Api_token пользователя",
+     *         required=true,
+     *         type="string",
+     *     ),
+     *      @SWG\Parameter(
+     *         name="email",
+     *         in="query",
+     *         description="Email пользователя",
+     *         required=true,
+     *         type="string",
+     *     ),
+     *      @SWG\Parameter(
+     *         name="password",
+     *         in="query",
+     *         description="Пароль пользователя",
+     *         required=true,
+     *         type="string",
+     *     ),
+     *      @SWG\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Страница списка",
+     *         required=true,
+     *         type="integer",
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Successful operation",
+     *         examples={"":{
+     *                       "success": true,
+     *                       "data":
+     *                       {
+     *                           "id": 4,
+     *                           "name": "nyqj8NdeYB",
+     *                           "email": "0DRR9VJtVN@mail.ru",
+     *                           "role": "User",
+     *                           "banned": false
+     *                       },
+     *                       {
+     *                           "id": 5,
+     *                           "name": "ElUqT66dSG",
+     *                           "email": "Xpt4kijhPC@mail.ru",
+     *                           "role": "User",
+     *                           "banned": false
+     *                       }
+     *                   }
+     *          }),
+     * )
+     */
+
     public function getUsers(RequestGetUsers $request)
     {
         $users = User::paginate(self::itemOnPage)->items();
@@ -47,10 +157,60 @@ class UserAuthController extends Controller
         return BaseFunctions::generateJSON(true, 'users', $format_users);
     } 
 
+
+    /**
+     * @SWG\PATCH(
+     *     path="/user/{userId}",
+     *     summary="Изменить данные пользователя",
+     *     tags={"UserAuth"},
+     *      @SWG\Parameter(
+     *         name="userId",
+     *         in="path",
+     *         description="ID пользователя",
+     *         required=true,
+     *         type="integer",
+     *     ),
+     *      @SWG\Parameter(
+     *         name="role",
+     *         in="query",
+     *         description="Новая роль пользователя",
+     *         required=true,
+     *         type="string",
+     *     ),
+     *      @SWG\Parameter(
+     *         name="name",
+     *         in="query",
+     *         description="Новое имя пользователя",
+     *         required=true,
+     *         type="string",
+     *     ),
+     *      @SWG\Parameter(
+     *         name="banned",
+     *         in="query",
+     *         description="Новый статус бана пользователя",
+     *         required=true,
+     *         type="boolean",
+     *     ),
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Successful operation",
+     *         examples={"":{
+     *                       "success": true,
+     *                       "data":
+     *                       {
+     *                           "id": 4,
+     *                           "name": "nyqj8NdeYB",
+     *                           "email": "0DRR9VJtVN@mail.ru",
+     *                           "role": "User",
+     *                           "banned": false
+     *                       }
+     *                   }
+     *          }),
+     * )
+     */
     public function patchUser(RequestPatchUser $request, $userId)
     {
         $user = User::where('id', $userId)->first();
-        
         abort_unless($user, 404);
         $old_user = clone $user;
         $user = $user->update(['role' => $request['role'], 'name' => $request['name'], 'banned' => $request['banned']]);

@@ -6,24 +6,52 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+
+/**
+ * @SWG\Definition(
+ *  definition="User",
+ *  @SWG\Property(
+ *      property="id",
+ *      type="integer",
+ *      example=1
+ *  ),
+ *  @SWG\Property(
+ *      property="name",
+ *      type="string",
+ *      example="Group 1"
+ *  ),
+ *  @SWG\Property(
+ *      property="email",
+ *      type="string",
+ *      example="qwerty@mail.ru"
+ *  ),
+ *  @SWG\Property(
+ *      property="password",
+ *      type="string",
+ *      example="qwerty"
+ *  ),
+ *  @SWG\Property(
+ *      property="banned",
+ *      type="bool",
+ *      example=false
+ *  ),
+ *  @SWG\Property(
+ *      property="role",
+ *      type="string",
+ *      example="User"
+ *  )
+ * )
+ */
 class User extends Authenticatable
 {
     use Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+
     protected $fillable = [
         'name', 'email', 'password', 'banned', 'role'
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
+
     protected $hidden = [
         'password', 'remember_token',
     ];
