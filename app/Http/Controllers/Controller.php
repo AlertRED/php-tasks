@@ -13,7 +13,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
  *   host="localhost:8000",
  *   basePath="/",
  *   @SWG\Info(
- *     title="Blog posts API",
+ *     title="phpTasks API",
  *     version="1.0.0"
  *   )
  * )
