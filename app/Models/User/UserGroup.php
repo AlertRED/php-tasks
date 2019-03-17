@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  *  ),
  *  @SWG\Property(
  *      property="timestamps",
- *      type="bool",
+ *      type="boolean",
  *		example=false
  *  )
  * )

@@ -32,7 +32,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *  ),
  *  @SWG\Property(
  *      property="banned",
- *      type="bool",
+ *      type="boolean",
  *      example=false
  *  ),
  *  @SWG\Property(
