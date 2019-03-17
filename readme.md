@@ -1,3 +1,5 @@
-## Задания
+# phpTasks
 
-- [Задание №1](https://github.com/2UP/interns-backend1/blob/master/task1.md).
+**API Docs:**
+- [Swagger API Docs - VIEW](https://generator.swagger.io/?url=https://raw.githubusercontent.com/AlertRED/phpTasks/task8/swagger.json).
+- [Swagger API Docs - EDIT](https://editor.swagger.io/?url=https://raw.githubusercontent.com/AlertRED/phpTasks/task8/swagger.json).
