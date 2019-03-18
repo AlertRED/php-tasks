@@ -37,6 +37,17 @@ class UserGroupController extends Controller
 	 *        			"success": true
 	 *		  		}
 	 *			}),
+	 *	   @SWG\Response(
+     *         response="422",
+     *         description="Failed operation",
+     *		   examples={"":{
+	 *			    "message": "The given data was invalid.",
+	 *			    "errors": {
+	 *			        "name": 
+	 *			            "The name has already been taken."
+	 *			    }
+	 *			}
+	 *			}),
      * )
      */
 	public static function postGroup(Request $request){
@@ -71,6 +82,14 @@ class UserGroupController extends Controller
 	 *		            		  },
 	 *						  }	
      *					  }}
+     *		),
+     *	   @SWG\Response(
+     *         response="404",
+     *         description="Failed operation",
+     *			examples={"":{ "message": 
+     *						"No query results for model [App\\User] 71" 
+     *						}
+     *			}
      *		)
      * )
      */
@@ -107,16 +126,23 @@ class UserGroupController extends Controller
 	 *        			"success": true
 	 *		  		}
 	 *			}),
+	 *	   @SWG\Response(
+     *         response="404",
+     *         description="Failed operation",
+     *		   examples={{ "message": "Not found user" },
+     *					{ "message": "Not found group" }
+	 *			}),
      * )
      */
 	public function addUserToGroup($userId, $groupId){
 		$user = User::find($userId);
 		$group = UserGroup::find($groupId);
 		if ($user && $group){
-		   $result = $group->users()->save($user);
-		   return BaseFunctions::generateJSON($user && $group);
+		   $result = $group->users()->sync($user);
+		   return BaseFunctions::generateJSON(true);
 		}
-		abort(404);
+		abort_unless($user, 404,"Not found user");
+		abort(404,"Not found group");
 	}
 
 	/**
@@ -138,11 +164,19 @@ class UserGroupController extends Controller
 	 *        			"success": true
 	 *		  		}
 	 *			}),
+	 *	   @SWG\Response(
+     *         response="404",
+     *         description="Failed operation",
+     *		   examples={"":{ 
+	 *        			"message": "Not found group"
+	 *		  		}
+	 *			}),
      * )
      */
 
 	public static function deleteGroup($groupId){
-		return BaseFunctions::generateJSON((bool) UserGroup::where('id', $groupId)->delete());
+		abort_unless((bool) UserGroup::where('id', $groupId)->delete(), 404, "Not found group");
+		return BaseFunctions::generateJSON();
 	}
 
 	/**
@@ -171,15 +205,22 @@ class UserGroupController extends Controller
 	 *        			"success": true
 	 *		  		}
 	 *			}),
+	 *	   @SWG\Response(
+     *         response="404",
+     *         description="Failed operation",
+     *		   examples={{ "message": "Not found user" },
+     *			{ "message": "Not found group" }
+	 *			}),
      * )
      */
 	public function deleteUsetByGroup($userId, $groupId){
 		$user = User::find($userId);
-		$group = UserGroup::find($userId);
+		$group = UserGroup::find($groupId);
 		if ($user && $group){
-			$group->users()->delete($user);
-			return BaseFunctions::generateJSON($user && $group);
+			$group->users()->detach($user);
+			return BaseFunctions::generateJSON(true);
 		}
-		abort(404);
+		abort_unless($user, 404,"Not found user");
+		abort(404,"Not found group");
 	}
 }

@@ -33,6 +33,17 @@
                                 "success": true
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Failed operation",
+                        "examples": {
+                            "": {
+                                "message": "The given data was invalid.",
+                                "errors": {
+                                    "name": "The name has already been taken."
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -64,6 +75,14 @@
                                         "name": "Group1"
                                     }
                                 }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Failed operation",
+                        "examples": {
+                            "": {
+                                "message": "No query results for model [App\\\\User] 71"
                             }
                         }
                     }
@@ -100,6 +119,17 @@
                                 "success": true
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Failed operation",
+                        "examples": [
+                            {
+                                "message": "Not found user"
+                            },
+                            {
+                                "message": "Not found group"
+                            }
+                        ]
                     }
                 }
             },
@@ -132,6 +162,17 @@
                                 "success": true
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Failed operation",
+                        "examples": [
+                            {
+                                "message": "Not found user"
+                            },
+                            {
+                                "message": "Not found group"
+                            }
+                        ]
                     }
                 }
             }
@@ -157,6 +198,14 @@
                         "examples": {
                             "": {
                                 "success": true
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Failed operation",
+                        "examples": {
+                            "": {
+                                "message": "Not found group"
                             }
                         }
                     }
@@ -196,6 +245,14 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Failed operation",
+                        "examples": {
+                            "": {
+                                "message": "Incorrect login or password"
+                            }
+                        }
                     }
                 }
             }
@@ -221,6 +278,14 @@
                         "examples": {
                             "": {
                                 "success": true
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Failed operation",
+                        "examples": {
+                            "": {
+                                "message": "Incorrect api"
                             }
                         }
                     }
@@ -285,6 +350,15 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Failed operation",
+                        "examples": {
+                            "": {
+                                "success": false,
+                                "message": "Unauthorized"
+                            }
+                        }
                     }
                 }
             }
@@ -338,6 +412,23 @@
                                     "role": "User",
                                     "banned": false
                                 }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Failed operation",
+                        "examples": {
+                            "": {
+                                "success": false,
+                                "message": "Unauthorized"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Failed operation",
+                        "examples": {
+                            "": {
+                                "message": "Not found user"
                             }
                         }
                     }

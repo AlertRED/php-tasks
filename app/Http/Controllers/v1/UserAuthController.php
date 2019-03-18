@@ -49,14 +49,20 @@ class UserAuthController extends Controller
      *                       }
      *                   }
      *          }),
+     *     @SWG\Response(
+     *         response="401",
+     *         description="Failed operation",
+     *         examples={"":{
+     *                       "message": "Incorrect login or password"
+     *                   }
+     *          }),
      * )
      */
     public function userLogin(Request $request)
     {
         $user = User::where('email', $request['email'])->first();
-        abort_unless($user && password_verify($request['password'],$user['password']), 404);
+        abort_unless($user && password_verify($request['password'],$user['password']), 401,"Incorrect login or password");
         return BaseFunctions::generateJSON(true ,'token', $user['api_token']);
-
     }
 
     /**
@@ -78,6 +84,13 @@ class UserAuthController extends Controller
      *                       "success": true,
      *                   }
      *          }),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Failed operation",
+     *         examples={"":{
+     *                   "message": "Incorrect api"
+     *               }
+     *          }),
      * )
      */
     public function userLogout(Request $request)
@@ -87,7 +100,7 @@ class UserAuthController extends Controller
             $result = $user->update(['api_token' => str_random(30)]);
             return BaseFunctions::generateJSON($result);
         }
-        abort(404);
+        abort(404,"Incorrect api");
     }
 
     /**
@@ -144,6 +157,14 @@ class UserAuthController extends Controller
      *                           "banned": false
      *                       }
      *                   }
+     *          }),
+     *     @SWG\Response(
+     *         response="401",
+     *         description="Failed operation",
+     *         examples={"":{
+     *                   "success": false,
+     *                   "message": "Unauthorized"
+     *               }
      *          }),
      * )
      */
@@ -206,12 +227,27 @@ class UserAuthController extends Controller
      *                       }
      *                   }
      *          }),
+     *     @SWG\Response(
+     *         response="401",
+     *         description="Failed operation",
+     *         examples={"":{
+     *                   "success": false,
+     *                   "message": "Unauthorized"
+     *               }
+     *          }),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Failed operation",
+     *         examples={"":{
+     *                   "message": "Not found user"
+     *               }
+     *          }),
      * )
      */
     public function patchUser(RequestPatchUser $request, $userId)
     {
         $user = User::where('id', $userId)->first();
-        abort_unless($user, 404);
+        abort_unless($user, 404,"Not found user");
         $old_user = clone $user;
         $user = $user->update(['role' => $request['role'], 'name' => $request['name'], 'banned' => $request['banned']]);
         if ($user){
