@@ -1,3 +1,3 @@
-## Задания
-
-- [Задание №1](https://github.com/2UP/interns-backend1/blob/master/task1.md).
+Выполненная работа на стажировке на работу в компанию 2UP по созданию Backend-a на фреймворке Laravel
+# Список заданий
+https://github.com/AlertRED/interns-backend1
